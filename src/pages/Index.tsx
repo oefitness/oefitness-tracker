@@ -8,6 +8,7 @@ import { AiRecommendationsCard } from '@/components/AiRecommendationsCard';
 import { HealthScoreBadge } from '@/components/HealthScoreBadge';
 import { QuickLogModal } from '@/components/QuickLogModal';
 import { DetailedRecipeModal } from '@/components/DetailedRecipeModal';
+import { ActiveWorkoutLoggerModal } from '@/components/exercise/ActiveWorkoutLoggerModal';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -22,7 +23,10 @@ import {
   Cookie,
   Sparkles,
   TrendingUp,
-  ChevronRight
+  ChevronRight,
+  Dumbbell,
+  Play,
+  BatteryCharging
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
@@ -34,13 +38,21 @@ const mealMeta: Record<MealType, { label: string; icon: React.ElementType; color
 };
 
 const Index = () => {
-  const { userProfile, loggedEntries, removeLoggedEntry, targets } = useApp();
+  const { userProfile, loggedEntries, removeLoggedEntry, workouts, startWorkout, recoveryMetrics } = useApp();
   const navigate = useNavigate();
   const [quickLogMeal, setQuickLogMeal] = useState<MealType | null>(null);
   const [selectedRecipe, setSelectedRecipe] = useState<Recipe | null>(null);
+  const [isWorkoutLoggerOpen, setIsWorkoutLoggerOpen] = useState(false);
+
+  const todayWorkout = workouts.find(w => !w.isCompleted) || workouts[0];
 
   const getEntriesForMeal = (meal: MealType) =>
     loggedEntries.filter(entry => entry.mealType === meal);
+
+  const handleStartWorkout = () => {
+    startWorkout(todayWorkout);
+    setIsWorkoutLoggerOpen(true);
+  };
 
   return (
     <div className="min-h-screen bg-muted/20 text-foreground pb-24">
@@ -80,6 +92,46 @@ const Index = () => {
             <AiRecommendationsCard onOpenRecipe={(recipe) => setSelectedRecipe(recipe)} />
           </div>
         </div>
+
+        {/* COMBINED ECOSYSTEM: Today's Training & Recovery Card */}
+        <Card className="rounded-3xl border bg-gradient-to-r from-card via-card to-emerald-500/5 shadow-sm overflow-hidden">
+          <CardContent className="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center gap-2">
+                <Badge className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 font-bold text-xs flex items-center gap-1">
+                  <Dumbbell className="w-3.5 h-3.5" />
+                  Today's Training
+                </Badge>
+                <Badge variant="outline" className="text-xs font-mono">
+                  {recoveryMetrics.readinessScore}/100 Readiness
+                </Badge>
+              </div>
+              <h3 className="text-lg font-black text-foreground">{todayWorkout.name}</h3>
+              <p className="text-xs text-muted-foreground">
+                {todayWorkout.durationMinutes} mins • {todayWorkout.exercises.length} Exercises • ~{todayWorkout.estimatedCalories} kcal burn
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => navigate('/exercise')}
+                className="rounded-xl text-xs font-bold h-9"
+              >
+                View Plan
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleStartWorkout}
+                className="rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs gap-1.5 h-9 shadow-sm"
+              >
+                <Play className="w-3.5 h-3.5 fill-white" />
+                Start Lift
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
 
         {/* Micronutrient Matrix Row */}
         <MicronutrientMatrix />
@@ -187,8 +239,8 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Quick link banner to Recipes & Budget */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
+        {/* Quick link banner to Recipes, Fitness & Budget */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
           <Card
             onClick={() => navigate('/recipes')}
             className="rounded-3xl border bg-gradient-to-r from-emerald-500/10 to-teal-500/10 p-4 cursor-pointer hover:border-emerald-500/40 transition-all"
@@ -197,12 +249,27 @@ const Index = () => {
               <div className="space-y-1">
                 <span className="text-xs font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300 flex items-center gap-1">
                   <Sparkles className="w-3.5 h-3.5" />
-                  Recipe Discovery Deck
+                  Recipe Discovery
                 </span>
-                <h4 className="font-extrabold text-sm sm:text-base">Swipe & find meals under £3</h4>
-                <p className="text-xs text-muted-foreground">High-protein, dietitian-approved whole food recipes</p>
+                <h4 className="font-extrabold text-sm">Swipe & find meals under £3</h4>
               </div>
               <ChevronRight className="w-5 h-5 text-emerald-600 shrink-0" />
+            </div>
+          </Card>
+
+          <Card
+            onClick={() => navigate('/exercise')}
+            className="rounded-3xl border bg-gradient-to-r from-sky-500/10 to-indigo-500/10 p-4 cursor-pointer hover:border-sky-500/40 transition-all"
+          >
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <span className="text-xs font-bold uppercase tracking-wider text-sky-700 dark:text-sky-300 flex items-center gap-1">
+                  <Dumbbell className="w-3.5 h-3.5" />
+                  Fitness & Triathlon
+                </span>
+                <h4 className="font-extrabold text-sm">Gym Sets, Pace & 1RM</h4>
+              </div>
+              <ChevronRight className="w-5 h-5 text-sky-600 shrink-0" />
             </div>
           </Card>
 
@@ -214,10 +281,9 @@ const Index = () => {
               <div className="space-y-1">
                 <span className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-300 flex items-center gap-1">
                   <TrendingUp className="w-3.5 h-3.5" />
-                  Supermarket Budgeting
+                  Supermarket Budget
                 </span>
-                <h4 className="font-extrabold text-sm sm:text-base">Compare Cheapest vs Healthiest</h4>
-                <p className="text-xs text-muted-foreground">Smart swaps across Tesco, Aldi, Sainsbury's</p>
+                <h4 className="font-extrabold text-sm">Cheapest vs Healthiest</h4>
               </div>
               <ChevronRight className="w-5 h-5 text-amber-600 shrink-0" />
             </div>
@@ -236,6 +302,12 @@ const Index = () => {
         recipe={selectedRecipe}
         isOpen={selectedRecipe !== null}
         onClose={() => setSelectedRecipe(null)}
+      />
+
+      <ActiveWorkoutLoggerModal
+        isOpen={isWorkoutLoggerOpen}
+        onClose={() => setIsWorkoutLoggerOpen(false)}
+        workout={todayWorkout}
       />
     </div>
   );

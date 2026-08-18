@@ -8,6 +8,7 @@ import {
   User,
   Sparkles,
   Activity,
+  Dumbbell,
   Sun,
   Moon
 } from 'lucide-react';
@@ -16,8 +17,7 @@ import { QuickLogModal } from '@/components/QuickLogModal';
 import { useApp } from '@/context/AppContext';
 
 export const Navbar: React.FC = () => {
-  const location = useLocation();
-  const { userProfile, targets } = useApp();
+  const { userProfile } = useApp();
   const [quickLogOpen, setQuickLogOpen] = useState(false);
   const [isDark, setIsDark] = useState(() => document.documentElement.classList.contains('dark'));
 
@@ -30,13 +30,6 @@ export const Navbar: React.FC = () => {
       setIsDark(true);
     }
   };
-
-  const navItems = [
-    { to: '/', label: 'Home', icon: Home },
-    { to: '/recipes', label: 'Recipes', icon: BookOpen },
-    { to: '/budget', label: 'Budget', icon: PiggyBank },
-    { to: '/profile', label: 'Profile', icon: User }
-  ];
 
   return (
     <>
@@ -98,6 +91,19 @@ export const Navbar: React.FC = () => {
           >
             <BookOpen className="w-5 h-5 mb-0.5" />
             <span>Recipes</span>
+          </NavLink>
+
+          {/* Exercise (Dedicated Fitness Hub) */}
+          <NavLink
+            to="/exercise"
+            className={({ isActive }) =>
+              `flex flex-col items-center justify-center flex-1 text-xs font-semibold transition-all ${
+                isActive ? 'text-emerald-600 dark:text-emerald-400 scale-105' : 'text-muted-foreground hover:text-foreground'
+              }`
+            }
+          >
+            <Dumbbell className="w-5 h-5 mb-0.5" />
+            <span>Fitness</span>
           </NavLink>
 
           {/* Center Quick Log Floating Button */}

@@ -6,6 +6,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { AppProvider } from "@/context/AppContext";
 import Index from "@/pages/Index";
 import RecipesPage from "@/pages/RecipesPage";
+import ExercisePage from "@/pages/ExercisePage";
 import BudgetPage from "@/pages/BudgetPage";
 import ProfilePage from "@/pages/ProfilePage";
 import NotFound from "@/pages/NotFound";
@@ -22,6 +23,7 @@ const App = () => {
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/recipes" element={<RecipesPage />} />
+              <Route path="/exercise" element={<ExercisePage />} />
               <Route path="/budget" element={<BudgetPage />} />
               <Route path="/profile" element={<ProfilePage />} />
               <Route path="*" element={<NotFound />} />

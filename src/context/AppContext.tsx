@@ -9,7 +9,9 @@ import {
   FoodItem,
   MealType
 } from '@/types/nutrition';
+import { WorkoutSession, FitnessGoal, WorkoutSet, ExerciseInWorkout, TriathlonTrainingPlan, RecoveryMetrics } from '@/types/fitness';
 import { MOCK_FOODS, MOCK_RECIPES, MOCK_SUPERMARKET_CATALOGUE } from '@/data/mockData';
+import { MOCK_SCHEDULED_WORKOUTS, MOCK_TRIATHLON_PLAN, MOCK_RECOVERY_METRICS } from '@/data/mockFitnessData';
 import { toast } from 'sonner';
 
 interface AppContextType {
@@ -66,13 +68,33 @@ interface AppContextType {
   // Smart suggestions
   aiCoachSuggestions: Array<{
     id: string;
-    type: 'nutrient' | 'budget' | 'garmin' | 'swap';
+    type: 'nutrient' | 'budget' | 'garmin' | 'swap' | 'fitness';
     title: string;
     message: string;
     actionLabel?: string;
     actionType?: string;
     recipe?: Recipe;
   }>;
+
+  // EXERCISE & FITNESS SYSTEM
+  workouts: WorkoutSession[];
+  activeWorkout: WorkoutSession | null;
+  startWorkout: (workout: WorkoutSession) => void;
+  updateActiveSet: (exerciseId: string, setIndex: number, updatedSet: Partial<WorkoutSet>) => void;
+  addSetToExercise: (exerciseId: string) => void;
+  completeWorkout: (workoutId: string, notes?: string, rpe?: number) => void;
+  logCustomCardioWorkout: (cardioSession: Partial<WorkoutSession>) => void;
+  rescheduleWorkout: (workoutId: string, newDate: string) => void;
+  triathlonPlan: TriathlonTrainingPlan;
+  updateTriathlonPlan: (plan: Partial<TriathlonTrainingPlan>) => void;
+  recoveryMetrics: RecoveryMetrics;
+  
+  // Pre / Post Workout Nutrition Pairing
+  getPrePostWorkoutRecommendations: () => {
+    preWorkoutRecipe: Recipe;
+    postWorkoutRecipe: Recipe;
+    guidance: string;
+  };
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -98,15 +120,10 @@ const DEFAULT_PROFILE: UserProfile = {
 const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  // Load from local storage or defaults
   const [userProfile, setUserProfile] = useState<UserProfile>(() => {
     const saved = localStorage.getItem('nutrisense_user_profile');
     if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {
-        console.error(e);
-      }
+      try { return JSON.parse(saved); } catch (e) {}
     }
     return DEFAULT_PROFILE;
   });
@@ -114,32 +131,27 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [savedRecipes, setSavedRecipes] = useState<Recipe[]>(() => {
     const saved = localStorage.getItem('nutrisense_saved_recipes');
     if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
+      try { return JSON.parse(saved); } catch (e) {}
     }
-    return [MOCK_RECIPES[0], MOCK_RECIPES[3]]; // Initial saved
+    return [MOCK_RECIPES[0], MOCK_RECIPES[3]];
   });
 
   const [loggedEntries, setLoggedEntries] = useState<LoggedFoodEntry[]>(() => {
     const saved = localStorage.getItem('nutrisense_logged_entries');
     if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
+      try { return JSON.parse(saved); } catch (e) {}
     }
-    // Seed today with 2 realistic meals so dashboard is alive
     return [
       {
         id: 'log-init-1',
-        foodItem: MOCK_FOODS[0], // Greek yogurt
+        foodItem: MOCK_FOODS[0],
         servings: 1.5,
         mealType: 'breakfast',
         loggedAt: new Date().toISOString()
       },
       {
         id: 'log-init-2',
-        foodItem: MOCK_FOODS[2], // Rolled Oats
+        foodItem: MOCK_FOODS[2],
         servings: 1,
         mealType: 'breakfast',
         loggedAt: new Date().toISOString()
@@ -150,36 +162,50 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>(() => {
     const saved = localStorage.getItem('nutrisense_shopping_list');
     if (saved) {
-      try {
-        return JSON.parse(saved);
-      } catch (e) {}
+      try { return JSON.parse(saved); } catch (e) {}
     }
     return [
       {
         id: 'sl-1',
-        product: MOCK_SUPERMARKET_CATALOGUE[0], // Aldi Chicken
+        product: MOCK_SUPERMARKET_CATALOGUE[0],
         quantity: 1,
         isPurchased: false,
         alternativeSuggestions: [MOCK_SUPERMARKET_CATALOGUE[1], MOCK_SUPERMARKET_CATALOGUE[2]]
       },
       {
         id: 'sl-2',
-        product: MOCK_SUPERMARKET_CATALOGUE[5], // Tesco Greek Yogurt
+        product: MOCK_SUPERMARKET_CATALOGUE[5],
         quantity: 2,
         isPurchased: true,
         alternativeSuggestions: [MOCK_SUPERMARKET_CATALOGUE[3], MOCK_SUPERMARKET_CATALOGUE[4]]
-      },
-      {
-        id: 'sl-3',
-        product: MOCK_SUPERMARKET_CATALOGUE[7], // Sainsbury's Salmon
-        quantity: 1,
-        isPurchased: false,
-        alternativeSuggestions: [MOCK_SUPERMARKET_CATALOGUE[6], MOCK_SUPERMARKET_CATALOGUE[8]]
       }
     ];
   });
 
-  // Save to localStorage
+  // FITNESS STATES
+  const [workouts, setWorkouts] = useState<WorkoutSession[]>(() => {
+    const saved = localStorage.getItem('nutrisense_workouts');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return MOCK_SCHEDULED_WORKOUTS;
+  });
+
+  const [activeWorkout, setActiveWorkout] = useState<WorkoutSession | null>(() => {
+    return MOCK_SCHEDULED_WORKOUTS[0]; // today's session
+  });
+
+  const [triathlonPlan, setTriathlonPlan] = useState<TriathlonTrainingPlan>(() => {
+    const saved = localStorage.getItem('nutrisense_triathlon_plan');
+    if (saved) {
+      try { return JSON.parse(saved); } catch (e) {}
+    }
+    return MOCK_TRIATHLON_PLAN;
+  });
+
+  const [recoveryMetrics, setRecoveryMetrics] = useState<RecoveryMetrics>(MOCK_RECOVERY_METRICS);
+
+  // Sync to local storage
   useEffect(() => {
     localStorage.setItem('nutrisense_user_profile', JSON.stringify(userProfile));
   }, [userProfile]);
@@ -196,19 +222,22 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem('nutrisense_shopping_list', JSON.stringify(shoppingList));
   }, [shoppingList]);
 
-  // Dynamic Target Calculations (Mifflin-St Jeor equation + Goal + Garmin)
+  useEffect(() => {
+    localStorage.setItem('nutrisense_workouts', JSON.stringify(workouts));
+  }, [workouts]);
+
+  useEffect(() => {
+    localStorage.setItem('nutrisense_triathlon_plan', JSON.stringify(triathlonPlan));
+  }, [triathlonPlan]);
+
+  // Target calculation with Garmin active burn
   const targets: NutritionTargets = useMemo(() => {
     const { weightKg, heightCm, age, gender, activityLevel, goal, customDailyCalories, weeklyBudget, garminConnected, garminActiveCalories } = userProfile;
 
-    // Basal Metabolic Rate (BMR)
     let bmr = (10 * weightKg) + (6.25 * heightCm) - (5 * age);
-    if (gender === 'male') {
-      bmr += 5;
-    } else {
-      bmr -= 161;
-    }
+    if (gender === 'male') bmr += 5;
+    else bmr -= 161;
 
-    // Activity multiplier
     const activityMultipliers: Record<string, number> = {
       sedentary: 1.2,
       light: 1.375,
@@ -218,7 +247,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
     const tdee = Math.round(bmr * (activityMultipliers[activityLevel] || 1.4));
 
-    // Goal adjustments
     let baseCalories = tdee;
     if (goal === 'lose_fat') baseCalories -= 450;
     else if (goal === 'build_muscle') baseCalories += 300;
@@ -227,9 +255,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const extraGarmin = garminConnected ? garminActiveCalories : 0;
     const adjustedCaloriesWithGarmin = dailyCalories + extraGarmin;
 
-    // Macros distribution
-    let proteinGrams = Math.round(weightKg * 2.0); // 2.0g per kg for health/muscle
-    if (userProfile.dietaryPreference === 'high_protein') {
+    let proteinGrams = Math.round(weightKg * 2.0);
+    if (userProfile.dietaryPreference === 'high_protein' || goal === 'build_muscle') {
       proteinGrams = Math.round(weightKg * 2.2);
     }
     const fatGrams = Math.round((adjustedCaloriesWithGarmin * 0.28) / 9);
@@ -263,7 +290,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [userProfile]);
 
-  // Compute Daily Totals from Logged Foods
+  // Logged totals
   const dailyLoggedTotals = useMemo(() => {
     let calories = 0;
     let protein = 0;
@@ -285,7 +312,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       fiber += entry.foodItem.macros.fiber * s;
       scoreSum += (entry.foodItem.healthScore.score || 80) * s;
 
-      // sum micros
       Object.keys(micros).forEach(k => {
         const key = k as keyof typeof entry.foodItem.micros;
         if (entry.foodItem.micros && entry.foodItem.micros[key]) {
@@ -308,10 +334,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [loggedEntries]);
 
-  // Budget calculations
+  // Budget stats
   const weeklyBudgetStats = useMemo(() => {
     const budget = userProfile.weeklyBudget;
-    // Mocked weekly spent based on purchased items + 4 days of history
     const spentThisWeek = 38.60;
     const shoppingListCost = shoppingList.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
     const remaining = Math.max(0, +(budget - spentThisWeek).toFixed(2));
@@ -333,11 +358,36 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   }, [userProfile.weeklyBudget, shoppingList]);
 
-  // Intelligent AI/Coach Suggestions
+  // AI Suggestions with Exercise & Nutrition Cross-link
   const aiCoachSuggestions = useMemo(() => {
     const list: AppContextType['aiCoachSuggestions'] = [];
     const remainingProtein = targets.proteinGrams - dailyLoggedTotals.protein;
-    const remainingCal = targets.adjustedCaloriesWithGarmin - dailyLoggedTotals.calories;
+
+    // Check today's workout
+    const todayWorkout = workouts.find(w => !w.isCompleted);
+    if (todayWorkout) {
+      if (todayWorkout.type === 'strength') {
+        list.push({
+          id: 'sug-fit-strength',
+          type: 'fitness',
+          title: `Pre-Workout Fuel: ${todayWorkout.name}`,
+          message: `Scheduled today! For peak muscle protein synthesis, consume 30-40g protein and 40g slow carbs 90 mins prior.`,
+          actionLabel: 'View Pre-Workout Oats',
+          actionType: 'recipe',
+          recipe: MOCK_RECIPES[3]
+        });
+      } else if (todayWorkout.type === 'cardio') {
+        list.push({
+          id: 'sug-fit-cardio',
+          type: 'fitness',
+          title: `Zone 2 Cardio Planned (${todayWorkout.cardioDetails?.distanceKm || 8} km)`,
+          message: `Carbohydrate replenishment is key. Hydrate with electrolytes and pair with the Spiced Dahl for easy digestion.`,
+          actionLabel: 'See High-Carb Recipe',
+          actionType: 'recipe',
+          recipe: MOCK_RECIPES[1]
+        });
+      }
+    }
 
     if (remainingProtein > 20) {
       list.push({
@@ -347,7 +397,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         message: `You're at ${dailyLoggedTotals.protein}g / ${targets.proteinGrams}g target. Here's a high-protein dinner under £2.80.`,
         actionLabel: 'View Recipe',
         actionType: 'recipe',
-        recipe: MOCK_RECIPES[0] // Salmon bowl
+        recipe: MOCK_RECIPES[0]
       });
     }
 
@@ -362,36 +412,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
     }
 
-    if (weeklyBudgetStats.remaining > 0) {
-      list.push({
-        id: 'sug-budget',
-        type: 'budget',
-        title: `${userProfile.currency}${weeklyBudgetStats.remaining} remaining in weekly food budget`,
-        message: `You're on track! Batch cooking the Spiced Red Lentil Dahl will cost only ${userProfile.currency}1.15 per portion and cover 3 lunches.`,
-        actionLabel: 'See Budget Hero Recipe',
-        actionType: 'recipe',
-        recipe: MOCK_RECIPES[1]
-      });
-    }
-
-    // Iron check
-    if (dailyLoggedTotals.micros.iron < targets.micros.iron.target * 0.6) {
-      list.push({
-        id: 'sug-iron',
-        type: 'nutrient',
-        title: `Iron intake is slightly low today`,
-        message: `Logged ${dailyLoggedTotals.micros.iron.toFixed(1)}mg of your ${targets.micros.iron.target}mg target. Lentils, dark greens or salmon will top this up effortlessly.`,
-        actionLabel: 'Find High-Iron Foods',
-        actionType: 'food'
-      });
-    }
-
     return list;
-  }, [targets, dailyLoggedTotals, weeklyBudgetStats, userProfile]);
+  }, [targets, dailyLoggedTotals, workouts, userProfile]);
 
   const updateUserProfile = (newProfile: Partial<UserProfile>) => {
     setUserProfile(prev => ({ ...prev, ...newProfile }));
-    toast.success('Profile & nutrition targets updated!');
+    toast.success('Profile & fitness targets updated!');
   };
 
   const logFood = (foodItem: FoodItem, servings: number, mealType: MealType, customGrams?: number) => {
@@ -450,7 +476,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       if (existing) {
         return prev.map(item => item.product.id === product.id ? { ...item, quantity: item.quantity + quantity } : item);
       }
-      // Find potential alternatives in same equivalent group
       const alternatives = MOCK_SUPERMARKET_CATALOGUE.filter(p => p.equivalentGroup === product.equivalentGroup && p.id !== product.id);
       return [...prev, {
         id: `sl-${Date.now()}`,
@@ -486,15 +511,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     toast.success(`Swapped item to ${newProduct.name}`);
   };
 
-  const addRecipeIngredientsToShoppingList = (recipe: Recipe, servings = 1) => {
-    // Add representative supermarket items for this recipe
-    let count = 0;
+  const addRecipeIngredientsToShoppingList = (recipe: Recipe) => {
     recipe.ingredients.forEach(ing => {
       const match = MOCK_SUPERMARKET_CATALOGUE.find(p => p.name.toLowerCase().includes(ing.name.toLowerCase().split(' ')[0])) || MOCK_SUPERMARKET_CATALOGUE[0];
-      if (match) {
-        addToShoppingList(match, 1);
-        count++;
-      }
+      if (match) addToShoppingList(match, 1);
     });
     toast.success(`Added ${recipe.ingredients.length} ingredients for "${recipe.name}" to shopping list!`);
   };
@@ -503,17 +523,138 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const randomBurnDelta = Math.floor(Math.random() * 80) - 40;
     const newBurn = Math.max(250, userProfile.garminActiveCalories + randomBurnDelta);
     const newSteps = userProfile.garminSteps + Math.floor(Math.random() * 450) + 100;
+    
+    // Also randomly adjust HRV and sleep
+    setRecoveryMetrics(prev => ({
+      ...prev,
+      readinessScore: Math.min(98, Math.max(72, prev.readinessScore + Math.floor(Math.random() * 6) - 3)),
+      restingHeartRate: Math.max(48, userProfile.garminHeartRate - 1)
+    }));
+
     setUserProfile(prev => ({
       ...prev,
       garminActiveCalories: newBurn,
       garminSteps: newSteps,
       garminLastSync: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
     }));
-    toast.success(`Garmin synced! Calories burned: ${newBurn} kcal, Steps: ${newSteps.toLocaleString()}`);
+    toast.success(`Garmin synced! Burn: +${newBurn} kcal, Steps: ${newSteps.toLocaleString()}`);
   };
 
   const adjustGarminBurn = (calories: number) => {
     setUserProfile(prev => ({ ...prev, garminActiveCalories: Math.max(0, calories) }));
+  };
+
+  // EXERCISE METHODS
+  const startWorkout = (workout: WorkoutSession) => {
+    setActiveWorkout(workout);
+    toast.success(`Started workout: ${workout.name}`);
+  };
+
+  const updateActiveSet = (exerciseId: string, setIndex: number, updatedSet: Partial<WorkoutSet>) => {
+    if (!activeWorkout) return;
+    setActiveWorkout(prev => {
+      if (!prev) return null;
+      const newExercises = prev.exercises.map(ex => {
+        if (ex.id !== exerciseId) return ex;
+        const newSets = ex.sets.map((s, idx) => idx === setIndex ? { ...s, ...updatedSet } : s);
+        return { ...ex, sets: newSets };
+      });
+      return { ...prev, exercises: newExercises };
+    });
+  };
+
+  const addSetToExercise = (exerciseId: string) => {
+    if (!activeWorkout) return;
+    setActiveWorkout(prev => {
+      if (!prev) return null;
+      const newExercises = prev.exercises.map(ex => {
+        if (ex.id !== exerciseId) return ex;
+        const lastSet = ex.sets[ex.sets.length - 1];
+        const newSet: WorkoutSet = {
+          id: `set-${Date.now()}`,
+          setNumber: ex.sets.length + 1,
+          weightKg: lastSet?.weightKg || 50,
+          reps: lastSet?.reps || 8,
+          isCompleted: false
+        };
+        return { ...ex, sets: [...ex.sets, newSet] };
+      });
+      return { ...prev, exercises: newExercises };
+    });
+  };
+
+  const completeWorkout = (workoutId: string, notes?: string, rpe?: number) => {
+    let totalVol = 0;
+    if (activeWorkout) {
+      activeWorkout.exercises.forEach(ex => {
+        ex.sets.forEach(s => {
+          if (s.isCompleted) totalVol += (s.weightKg * s.reps);
+        });
+      });
+    }
+
+    const updated = workouts.map(w => {
+      if (w.id === workoutId) {
+        return {
+          ...w,
+          isCompleted: true,
+          completedAt: new Date().toISOString(),
+          totalVolumeKg: totalVol || 4800,
+          notes: notes || w.notes,
+          rpePostSession: rpe || 8
+        };
+      }
+      return w;
+    });
+
+    setWorkouts(updated);
+    setActiveWorkout(null);
+    toast.success(`Workout complete! Total Volume Lifted: ${totalVol.toLocaleString()} kg 🎉`);
+  };
+
+  const logCustomCardioWorkout = (cardioSession: Partial<WorkoutSession>) => {
+    const newSession: WorkoutSession = {
+      id: `cardio-${Date.now()}`,
+      name: cardioSession.name || 'Cardio Session',
+      type: cardioSession.type || 'cardio',
+      targetGoal: 'running',
+      scheduledDate: new Date().toISOString(),
+      durationMinutes: cardioSession.durationMinutes || 40,
+      estimatedCalories: cardioSession.estimatedCalories || 350,
+      isCompleted: true,
+      completedAt: new Date().toISOString(),
+      source: 'custom_logged',
+      cardioDetails: cardioSession.cardioDetails,
+      exercises: []
+    };
+    setWorkouts(prev => [newSession, ...prev]);
+    toast.success(`Logged ${newSession.name} (${newSession.cardioDetails?.distanceKm || 5} km)`);
+  };
+
+  const rescheduleWorkout = (workoutId: string, newDate: string) => {
+    setWorkouts(prev => prev.map(w => w.id === workoutId ? { ...w, scheduledDate: newDate } : w));
+    toast.info(`Workout rescheduled to ${new Date(newDate).toLocaleDateString()}`);
+  };
+
+  const updateTriathlonPlan = (plan: Partial<TriathlonTrainingPlan>) => {
+    setTriathlonPlan(prev => ({ ...prev, ...plan }));
+    toast.success('Triathlon training plan updated!');
+  };
+
+  const getPrePostWorkoutRecommendations = () => {
+    const todayWorkout = workouts.find(w => !w.isCompleted) || workouts[0];
+    if (todayWorkout.type === 'strength') {
+      return {
+        preWorkoutRecipe: MOCK_RECIPES[3], // Oats
+        postWorkoutRecipe: MOCK_RECIPES[0], // Salmon Bowl
+        guidance: 'Strength Focus: Aim for 25-35g fast-absorbing protein and slow-digesting oats beforehand. Post-workout, consume 40g bioavailable protein to stimulate mTOR muscle protein synthesis.'
+      };
+    }
+    return {
+      preWorkoutRecipe: MOCK_RECIPES[4], // Black Bean Lime Bowl
+      postWorkoutRecipe: MOCK_RECIPES[1], // Lentil Dahl
+      guidance: 'Endurance Focus: Maximize glycogen storage with complex carbohydrates and electrolytes. Post-session, refuel with warm spiced lentils for anti-inflammatory curcumin and bio-iron.'
+    };
   };
 
   return (
@@ -540,7 +681,19 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         adjustGarminBurn,
         dailyLoggedTotals,
         weeklyBudgetStats,
-        aiCoachSuggestions
+        aiCoachSuggestions,
+        workouts,
+        activeWorkout,
+        startWorkout,
+        updateActiveSet,
+        addSetToExercise,
+        completeWorkout,
+        logCustomCardioWorkout,
+        rescheduleWorkout,
+        triathlonPlan,
+        updateTriathlonPlan,
+        recoveryMetrics,
+        getPrePostWorkoutRecommendations
       }}
     >
       {children}

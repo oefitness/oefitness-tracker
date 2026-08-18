@@ -2,42 +2,6 @@ import React, { useState } from 'react';
 import { HealthScoreDetails } from '@/types/nutrition';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, CheckCircle2, AlertTriangle, Info, Sparkles, Flame, Apple } from 'lucide-react';
-
-interface HealthScoreBadgeProps {
-  healthScore: HealthScoreDetails;
-  size?: 'sm' | 'md' | 'lg';
-  showDetailsOnClick?: boolean;
-  foodName?: string;
-}
-
-export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
-  healthScore,
-  size = 'md',
-  showDetailsOnClick = true,
-  foodName = 'This Item'
-}) => {
-  const [open, setOpen] = useState(false);
-  const score = healthScore.score || 80;
-
-  // Score color scale
-  const getColor = (s: number) => {
-    if (s >= 85) return { bg: 'bg-emerald-500/15', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-500/30', ring: 'ring-emerald-500', bar: 'bg-emerald-500' };
-    if (s >= 70) return { bg: 'bg-teal-500/15', text: 'text-teal-700 dark:text-teal-400', border: 'border-teal-500/30', ring: 'ring-teal-500', bar: 'bg-teal-500' };
-    if (s >= 50) return { bg: 'bg-amber-500/15', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-500/30', ring: 'ring-amber-500', bar: 'bg-amber-500' };
-    return { bg: 'bg-rose-500/15', text: 'text-rose-700 dark:text-rose-400', border: 'border-rose-500/30', ring: 'ring-rose-500', bar: 'bg-rose-500' };
-  };
-
-  const colors = getColor(score);
-
-  const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5 font-semibold gap-1',
-    md: 'text-sm px-2.5 py-1 font-bold gap-1.5',
-    lg: 'text-lg<dyad-write path="src/components/HealthScoreBadge.tsx" description="Health Score badge from 1-100 with comprehensive positive and negative factor breakdown dialog">
-import React, { useState } from 'react';
-import { HealthScoreDetails } from '@/types/nutrition';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, CheckCircle2, AlertTriangle, Info, Sparkles, Apple } from 'lucide-react';
 
 interface HealthScoreBadgeProps {

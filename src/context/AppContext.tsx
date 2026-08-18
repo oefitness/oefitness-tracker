@@ -95,6 +95,9 @@ interface AppContextType {
     postWorkoutRecipe: Recipe;
     guidance: string;
   };
+
+  // Data Management
+  resetAllStats: () => void;
 }
 
 const DEFAULT_PROFILE: UserProfile = {
@@ -136,50 +139,25 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     return [MOCK_RECIPES[0], MOCK_RECIPES[3]];
   });
 
-  const [loggedEntries, setLoggedEntries] = useState<LoggedFoodEntry[]>(() => {
+  const [allLoggedEntries, setAllLoggedEntries] = useState<LoggedFoodEntry[]>(() => {
     const saved = localStorage.getItem('nutrisense_logged_entries');
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
-    return [
-      {
-        id: 'log-init-1',
-        foodItem: MOCK_FOODS[0],
-        servings: 1.5,
-        mealType: 'breakfast',
-        loggedAt: new Date().toISOString()
-      },
-      {
-        id: 'log-init-2',
-        foodItem: MOCK_FOODS[2],
-        servings: 1,
-        mealType: 'breakfast',
-        loggedAt: new Date().toISOString()
-      }
-    ];
+    return [];
   });
+
+  const loggedEntries = useMemo(() => {
+    const today = new Date().toISOString().split('T')[0];
+    return allLoggedEntries.filter(entry => entry.loggedAt.startsWith(today));
+  }, [allLoggedEntries]);
 
   const [shoppingList, setShoppingList] = useState<ShoppingListItem[]>(() => {
     const saved = localStorage.getItem('nutrisense_shopping_list');
     if (saved) {
       try { return JSON.parse(saved); } catch (e) {}
     }
-    return [
-      {
-        id: 'sl-1',
-        product: MOCK_SUPERMARKET_CATALOGUE[0],
-        quantity: 1,
-        isPurchased: false,
-        alternativeSuggestions: [MOCK_SUPERMARKET_CATALOGUE[1], MOCK_SUPERMARKET_CATALOGUE[2]]
-      },
-      {
-        id: 'sl-2',
-        product: MOCK_SUPERMARKET_CATALOGUE[5],
-        quantity: 2,
-        isPurchased: true,
-        alternativeSuggestions: [MOCK_SUPERMARKET_CATALOGUE[3], MOCK_SUPERMARKET_CATALOGUE[4]]
-      }
-    ];
+    return [];
   });
 
   // FITNESS STATES
@@ -215,8 +193,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   }, [savedRecipes]);
 
   useEffect(() => {
-    localStorage.setItem('nutrisense_logged_entries', JSON.stringify(loggedEntries));
-  }, [loggedEntries]);
+    localStorage.setItem('nutrisense_logged_entries', JSON.stringify(allLoggedEntries));
+  }, [allLoggedEntries]);
 
   useEffect(() => {
     localStorage.setItem('nutrisense_shopping_list', JSON.stringify(shoppingList));
@@ -429,7 +407,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       loggedAt: new Date().toISOString(),
       customGrams
     };
-    setLoggedEntries(prev => [entry, ...prev]);
+    setAllLoggedEntries(prev => [entry, ...prev]);
     toast.success(`Logged ${foodItem.name} (${servings}x) to ${mealType}`);
   };
 
@@ -450,7 +428,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const removeLoggedEntry = (id: string) => {
-    setLoggedEntries(prev => prev.filter(e => e.id !== id));
+    setAllLoggedEntries(prev => prev.filter(e => e.id !== id));
     toast.info('Item removed from log');
   };
 
@@ -657,6 +635,21 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     };
   };
 
+  const resetAllStats = () => {
+    localStorage.removeItem('nutrisense_user_profile');
+    localStorage.removeItem('nutrisense_saved_recipes');
+    localStorage.removeItem('nutrisense_logged_entries');
+    localStorage.removeItem('nutrisense_shopping_list');
+    localStorage.removeItem('nutrisense_workouts');
+    localStorage.removeItem('nutrisense_triathlon_plan');
+
+    toast.success("All app data has been reset! Reloading...");
+
+    setTimeout(() => {
+      window.location.reload();
+    }, 800);
+  };
+
   return (
     <AppContext.Provider
       value={{
@@ -693,7 +686,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         triathlonPlan,
         updateTriathlonPlan,
         recoveryMetrics,
-        getPrePostWorkoutRecommendations
+        getPrePostWorkoutRecommendations,
+        resetAllStats
       }}
     >
       {children}

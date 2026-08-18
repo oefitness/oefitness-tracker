@@ -7,6 +7,17 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
+import {
   User,
   Activity,
   Target,
@@ -17,12 +28,13 @@ import {
   Footprints,
   Flame,
   Zap,
-  Sparkles
+  Sparkles,
+  AlertTriangle
 } from 'lucide-react';
 import { Gender, ActivityLevel, NutritionGoal, DietaryPreference } from '@/types/nutrition';
 
 const ProfilePage: React.FC = () => {
-  const { userProfile, updateUserProfile, targets, syncGarmin } = useApp();
+  const { userProfile, updateUserProfile, targets, syncGarmin, resetAllStats } = useApp();
 
   const [name, setName] = useState(userProfile.name);
   const [age, setAge] = useState(userProfile.age);
@@ -339,6 +351,45 @@ const ProfilePage: React.FC = () => {
             Save Profile & Recalculate Nutrition
           </Button>
         </form>
+
+        {/* Danger Zone */}
+        <Card className="rounded-3xl border-rose-500/50 bg-rose-500/5 shadow-sm">
+          <CardContent className="p-5 sm:p-6 space-y-4">
+            <h3 className="font-bold text-base flex items-center gap-2 text-rose-600 dark:text-rose-400">
+              <AlertTriangle className="w-4 h-4" />
+              Danger Zone
+            </h3>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-sm font-semibold">Reset All Data</p>
+                <p className="text-xs text-muted-foreground">
+                  This will permanently delete all your profile, nutrition logs, recipes, and fitness data. This action cannot be undone.
+                </p>
+              </div>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button variant="destructive" className="rounded-xl text-xs font-bold">
+                    Reset Application
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action is permanent and cannot be undone. This will delete all your personal settings, food logs, saved recipes, fitness plans, and shopping lists.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={resetAllStats} className="bg-rose-600 hover:bg-rose-700">
+                      Yes, Delete Everything
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </div>
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

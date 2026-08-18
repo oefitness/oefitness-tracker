@@ -2,42 +2,6 @@ import React, { useState } from 'react';
 import { HealthScoreDetails } from '@/types/nutrition';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
-import { ShieldCheck, CheckCircle2, AlertTriangle, Info, Sparkles, Flame, Apple } from 'lucide-react';
-
-interface HealthScoreBadgeProps {
-  healthScore: HealthScoreDetails;
-  size?: 'sm' | 'md' | 'lg';
-  showDetailsOnClick?: boolean;
-  foodName?: string;
-}
-
-export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
-  healthScore,
-  size = 'md',
-  showDetailsOnClick = true,
-  foodName = 'This Item'
-}) => {
-  const [open, setOpen] = useState(false);
-  const score = healthScore.score || 80;
-
-  // Score color scale
-  const getColor = (s: number) => {
-    if (s >= 85) return { bg: 'bg-emerald-500/15', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-500/30', ring: 'ring-emerald-500', bar: 'bg-emerald-500' };
-    if (s >= 70) return { bg: 'bg-teal-500/15', text: 'text-teal-700 dark:text-teal-400', border: 'border-teal-500/30', ring: 'ring-teal-500', bar: 'bg-teal-500' };
-    if (s >= 50) return { bg: 'bg-amber-500/15', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-500/30', ring: 'ring-amber-500', bar: 'bg-amber-500' };
-    return { bg: 'bg-rose-500/15', text: 'text-rose-700 dark:text-rose-400', border: 'border-rose-500/30', ring: 'ring-rose-500', bar: 'bg-rose-500' };
-  };
-
-  const colors = getColor(score);
-
-  const sizeClasses = {
-    sm: 'text-xs px-2 py-0.5 font-semibold gap-1',
-    md: 'text-sm px-2.5 py-1 font-bold gap-1.5',
-    lg: 'text-lg<dyad-write path="src/components/HealthScoreBadge.tsx" description="Health Score badge from 1-100 with comprehensive positive and negative factor breakdown dialog">
-import React, { useState } from 'react';
-import { HealthScoreDetails } from '@/types/nutrition';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
 import { ShieldCheck, CheckCircle2, AlertTriangle, Info, Sparkles, Apple } from 'lucide-react';
 
 interface HealthScoreBadgeProps {
@@ -57,10 +21,10 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
   const score = healthScore?.score || 80;
 
   const getColor = (s: number) => {
-    if (s >= 85) return { bg: 'bg-emerald-50 dark:bg-emerald-950/40', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-300 dark:border-emerald-800', bar: 'bg-emerald-500' };
-    if (s >= 70) return { bg: 'bg-teal-50 dark:bg-teal-950/40', text: 'text-teal-700 dark:text-teal-400', border: 'border-teal-300 dark:border-teal-800', bar: 'bg-teal-500' };
-    if (s >= 50) return { bg: 'bg-amber-50 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-300 dark:border-amber-800', bar: 'bg-amber-500' };
-    return { bg: 'bg-rose-50 dark:bg-rose-950/40', text: 'text-rose-700 dark:text-rose-400', border: 'border-rose-300 dark:border-rose-800', bar: 'bg-rose-500' };
+    if (s >= 85) return { bg: 'bg-emerald-50 dark:bg-emerald-950/40', text: 'text-emerald-700 dark:text-emerald-400', border: 'border-emerald-300 dark:border-emerald-800' };
+    if (s >= 70) return { bg: 'bg-teal-50 dark:bg-teal-950/40', text: 'text-teal-700 dark:text-teal-400', border: 'border-teal-300 dark:border-teal-800' };
+    if (s >= 50) return { bg: 'bg-amber-50 dark:bg-amber-950/40', text: 'text-amber-700 dark:text-amber-400', border: 'border-amber-300 dark:border-amber-800' };
+    return { bg: 'bg-rose-50 dark:bg-rose-950/40', text: 'text-rose-700 dark:text-rose-400', border: 'border-rose-300 dark:border-rose-800' };
   };
 
   const colors = getColor(score);
@@ -90,11 +54,11 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
 
       {showDetailsOnClick && (
         <Dialog open={open} onOpenChange={setOpen}>
-          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto rounded-2xl">
+          <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto rounded-3xl">
             <DialogHeader className="text-left space-y-1">
               <div className="flex items-center justify-between">
                 <Badge variant="outline" className="text-xs font-medium">
-                  {healthScore.processingLevel || 'Whole Food Matrix'}
+                  {healthScore?.processingLevel || 'Whole Food Matrix'}
                 </Badge>
                 <span className="text-xs text-muted-foreground">NutriSense Algorithm v2.4</span>
               </div>
@@ -108,8 +72,7 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
             </DialogHeader>
 
             <div className="space-y-4 pt-2">
-              {/* Main Score Hero Card */}
-              <div className="p-4 rounded-xl border bg-muted/30 flex items-center justify-between">
+              <div className="p-4 rounded-2xl border bg-muted/30 flex items-center justify-between">
                 <div className="space-y-1">
                   <div className="text-3xl font-extrabold flex items-baseline gap-1">
                     <span className={colors.text}>{score}</span>
@@ -119,14 +82,13 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
                     {score >= 85 ? 'Optimal Nutrient Density' : score >= 70 ? 'Nutritious & Balanced' : score >= 50 ? 'Moderate Nutritional Quality' : 'Ultra-Processed / High Free Sugar'}
                   </p>
                 </div>
-                <div className="w-16 h-16 rounded-full border-4 flex items-center justify-center font-black text-lg border-emerald-500/40">
+                <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
                   <Apple className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
                 </div>
               </div>
 
-              {/* Summary note */}
-              {healthScore.summary && (
-                <p className="text-xs leading-relaxed text-muted-foreground bg-accent/40 p-3 rounded-lg border">
+              {healthScore?.summary && (
+                <p className="text-xs leading-relaxed text-muted-foreground bg-accent/40 p-3 rounded-xl border">
                   {healthScore.summary}
                 </p>
               )}
@@ -138,8 +100,8 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
                   Healthy Nutritional Factors (+Points)
                 </h4>
                 <div className="space-y-1.5">
-                  {healthScore.positiveFactors?.map((f, idx) => (
-                    <div key={idx} className="p-2.5 rounded-lg bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 text-xs flex items-start justify-between">
+                  {healthScore?.positiveFactors?.map((f, idx) => (
+                    <div key={idx} className="p-2.5 rounded-xl bg-emerald-50/60 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-900/50 text-xs flex items-start justify-between">
                       <div>
                         <p className="font-semibold text-emerald-900 dark:text-emerald-200">{f.title}</p>
                         <p className="text-muted-foreground mt-0.5">{f.description}</p>
@@ -153,7 +115,7 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
               </div>
 
               {/* Negative Factors */}
-              {healthScore.negativeFactors && healthScore.negativeFactors.length > 0 && (
+              {healthScore?.negativeFactors && healthScore.negativeFactors.length > 0 && (
                 <div className="space-y-2">
                   <h4 className="text-xs font-bold uppercase tracking-wider text-amber-700 dark:text-amber-400 flex items-center gap-1.5">
                     <AlertTriangle className="w-4 h-4" />
@@ -161,7 +123,7 @@ export const HealthScoreBadge: React.FC<HealthScoreBadgeProps> = ({
                   </h4>
                   <div className="space-y-1.5">
                     {healthScore.negativeFactors.map((f, idx) => (
-                      <div key={idx} className="p-2.5 rounded-lg bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-xs flex items-start justify-between">
+                      <div key={idx} className="p-2.5 rounded-xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/50 text-xs flex items-start justify-between">
                         <div>
                           <p className="font-semibold text-amber-900 dark:text-amber-200">{f.title}</p>
                           <p className="text-muted-foreground mt-0.5">{f.description}</p>

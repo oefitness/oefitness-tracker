@@ -3,7 +3,6 @@ import { useApp } from '@/context/AppContext';
 import { Navbar } from '@/components/Navbar';
 import { SupermarketComparisonCard } from '@/components/SupermarketComparisonCard';
 import { MOCK_SUPERMARKET_CATALOGUE } from '@/data/mockData';
-import { SupermarketProduct } from '@/types/nutrition';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -12,17 +11,12 @@ import { Input } from '@/components/ui/input';
 import {
   PiggyBank,
   ShoppingCart,
-  TrendingDown,
-  TrendingUp,
-  AlertTriangle,
   CheckCircle2,
   Trash2,
   Plus,
-  RefreshCw,
   Store,
   Sparkles,
-  Search,
-  Scale
+  Search
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';
@@ -272,7 +266,6 @@ const BudgetPage: React.FC = () => {
             </p>
           </div>
 
-          {/* Render comparison modules for key staples */}
           <SupermarketComparisonCard
             currentProduct={MOCK_SUPERMARKET_CATALOGUE[0]}
             alternatives={[MOCK_SUPERMARKET_CATALOGUE[1], MOCK_SUPERMARKET_CATALOGUE[2]]}
@@ -311,21 +304,30 @@ const BudgetPage: React.FC = () => {
               </div>
 
               <div className="relative max-w-xs w-full">
-                <Search className="w-4<dyad-write path="src/pages/BudgetPage.tsx" description="Supermarket Budgeting and Shopping section featuring weekly spend gauge, supermarket picker, interactive shopping list, and 3-Tier comparison engine (Cheapest vs Healthiest vs Best Value)">
+                <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                <Input
+                  placeholder="Search catalogue..."
+                  value={searchCatalogue}
+                  onChange={(e) => setSearchCatalogue(e.target.value)}
+                  className="pl-9 rounded-2xl h-10 text-xs"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              {filteredCatalogue.map(prod => (
+                <div
+                  key={prod.id}
+                  className="p-3 rounded-2xl border bg-muted/20 flex items-center justify-between gap-3"
+                >
+                  <div className="min-w-0 space-y-0.5">
+                    <div className="flex items-center gap-1.5">
+                      <Badge variant="outline" className="text-[10px]">{<dyad-write path="src/pages/BudgetPage.tsx" description="Supermarket Budgeting and Shopping page featuring spend gauge, supermarket picker, interactive shopping list, and 3-Tier comparison engine">
 import React, { useState } from 'react';
 import { useApp } from '@/context/AppContext';
 import { Navbar } from '@/components/Navbar';
 import { SupermarketComparisonCard } from '@/components/SupermarketComparisonCard';
 import { MOCK_SUPERMARKET_CATALOGUE } from '@/data/mockData';
-import { SupermarketProduct } from '@/types/nutrition';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button }<dyad-write path="src/pages/BudgetPage.tsx" description="Supermarket Budgeting and Shopping section featuring weekly spend gauge, supermarket picker, interactive shopping list, and 3-Tier comparison engine (Cheapest vs Healthiest vs Best Value)">
-import React, { useState } from 'react';
-import { useApp } from '@/context/AppContext';
-import { Navbar } from '@/components/Navbar';
-import { SupermarketComparisonCard } from '@/components/SupermarketComparisonCard';
-import { MOCK_SUPERMARKET_CATALOGUE } from '@/data/mockData';
-import { SupermarketProduct } from '@/types/nutrition';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -334,17 +336,12 @@ import { Input } from '@/components/ui/input';
 import {
   PiggyBank,
   ShoppingCart,
-  TrendingDown,
-  TrendingUp,
-  AlertTriangle,
   CheckCircle2,
   Trash2,
   Plus,
-  RefreshCw,
   Store,
   Sparkles,
-  Search,
-  Scale
+  Search
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { toast } from 'sonner';

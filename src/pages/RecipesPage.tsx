@@ -18,10 +18,9 @@ import {
   Clock,
   DollarSign,
   Bookmark,
-  BookmarkCheck,
   Search,
-  CheckCircle2,
-  Trash2
+  Trash2,
+  Filter
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 
@@ -32,7 +31,16 @@ const RecipesPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterTag, setFilterTag] = useState<string | null>(null);
 
-  const tags = ['All', 'High Protein', 'Budget Hero', 'Vegan', 'Gluten Free', 'Quick Dinner'];
+  const tags = [
+    'All',
+    'High Protein',
+    'Budget Hero',
+    'Mediterranean',
+    'Vegan',
+    'Gluten Free',
+    'Quick Dinner',
+    'Zero Cook'
+  ];
 
   const filteredBrowse = MOCK_RECIPES.filter(recipe => {
     const matchesSearch =
@@ -59,10 +67,10 @@ const RecipesPage: React.FC = () => {
           <div>
             <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2">
               <BookOpen className="w-6 h-6 text-emerald-600" />
-              Meal Discovery & Recipe Bank
+              Healthy Online Recipe Database
             </h1>
             <p className="text-xs sm:text-sm text-muted-foreground">
-              Swipe to curate your weekly meals with balanced health scores and precise supermarket costs.
+              Explore nutrient-dense, high-protein, and budget-friendly meals with full health scores and cost breakdowns.
             </p>
           </div>
         </div>
@@ -80,7 +88,7 @@ const RecipesPage: React.FC = () => {
             </TabsTrigger>
             <TabsTrigger value="browse" className="rounded-xl font-bold text-xs gap-1.5">
               <Search className="w-3.5 h-3.5" />
-              All Recipes
+              All Recipes ({MOCK_RECIPES.length})
             </TabsTrigger>
           </TabsList>
 
@@ -195,7 +203,7 @@ const RecipesPage: React.FC = () => {
               <div className="relative">
                 <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
                 <Input
-                  placeholder="Search recipes, ingredients (salmon, lentils, chicken)..."
+                  placeholder="Search recipes, ingredients (salmon, lentils, chicken, soba, chili)..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-9 rounded-2xl h-11 text-xs"
@@ -207,7 +215,7 @@ const RecipesPage: React.FC = () => {
                   <button
                     key={tag}
                     onClick={() => setFilterTag(tag === filterTag ? null : tag)}
-                    className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
+                    className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all border ${
                       (filterTag === tag || (!filterTag && tag === 'All'))
                         ? 'bg-emerald-600 text-white border-emerald-600 shadow-xs'
                         : 'bg-card text-muted-foreground hover:text-foreground'

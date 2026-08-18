@@ -181,33 +181,32 @@ export const MOCK_FOODS: FoodItem[] = [
   },
   {
     id: 'f-7',
-    name: 'Sweet Crunch Ultra-Processed Cereal',
-    brand: 'CrispySugar Co',
-    category: 'Grains & Cereals',
-    servingSize: '1 bowl (45g)',
-    servingSizeGrams: 45,
-    macros: { calories: 185, protein: 2.2, carbs: 39, fat: 1.8, fiber: 1.2 },
+    name: 'Organic Pasture-Raised Whole Eggs',
+    brand: 'Happy Valley',
+    category: 'Eggs & Dairy',
+    servingSize: '2 large eggs (100g)',
+    servingSizeGrams: 100,
+    macros: { calories: 140, protein: 13, carbs: 1, fat: 9.5, fiber: 0 },
     micros: {
-      sodium: 260, potassium: 65, calcium: 40, iron: 3.0, magnesium: 12, zinc: 0.6,
-      vitaminA: 120, vitaminC: 8, vitaminD: 1.5, vitaminE: 0.2, vitaminK: 0.1, vitaminB12: 0.5, folate: 50
+      sodium: 140, potassium: 135, calcium: 55, iron: 1.8, magnesium: 12, zinc: 1.3,
+      vitaminA: 160, vitaminC: 0, vitaminD: 2.0, vitaminE: 1.0, vitaminK: 0.3, vitaminB12: 1.1, folate: 48
     },
     healthScore: {
-      score: 38,
-      summary: 'High added sugar and ultra-processed refined starch with rapid insulin spike.',
-      processingLevel: 'Ultra-Processed',
+      score: 94,
+      summary: 'Complete protein with rich choline for brain health, lutein, and bioavailable Vitamin D.',
+      processingLevel: 'Unprocessed/Minimally Processed',
       positiveFactors: [
-        { title: 'Fortified Micronutrients', description: 'Added synthetic iron and B vitamins', impact: 'positive', weight: 15 }
+        { title: 'High Choline & Lutein', description: 'Protects neurological function & vision', impact: 'positive', weight: 35 },
+        { title: 'Bioavailable Complete Protein', description: '100% amino acid profile score', impact: 'positive', weight: 30 }
       ],
       negativeFactors: [
-        { title: 'Excess Added Sugars', description: '16g free sugars (over 50% max daily allowance)', impact: 'negative', weight: 35 },
-        { title: 'Ultra-Refined Flour', description: 'Stripped of natural bran and endosperm fiber', impact: 'negative', weight: 25 },
-        { title: 'Elevated Sodium for Cereal', description: '260mg added sodium per modest portion', impact: 'negative', weight: 15 }
+        { title: 'Dietary Cholesterol', description: 'Neutral impact in healthy metabolic profiles', impact: 'negative', weight: 3 }
       ]
     },
-    priceEstimate: 0.42,
-    supermarket: 'Tesco',
-    barcode: '502847192847',
-    image: 'https://images.unsplash.com/photo-1521483451569-e33803c0330c?w=400&auto=format&fit=crop&q=80'
+    priceEstimate: 0.55,
+    supermarket: 'Sainsbury\'s',
+    barcode: '502938192847',
+    image: 'https://images.unsplash.com/photo-1582722872445-44dc5f7e3c8f?w=400&auto=format&fit=crop&q=80'
   }
 ];
 
@@ -269,7 +268,7 @@ export const MOCK_RECIPES: Recipe[] = [
   {
     id: 'rec-2',
     name: 'Spiced Golden Red Lentil Dahl',
-    headline: 'Budget Super-Fuel: 26g Protein & 14g Fiber for £1.15',
+    headline: 'Budget Super-Fuel: 24g Protein & 14g Fiber for £1.15',
     image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&auto=format&fit=crop&q=80',
     prepTimeMinutes: 8,
     cookTimeMinutes: 18,
@@ -478,6 +477,272 @@ export const MOCK_RECIPES: Recipe[] = [
     storageInfo: 'Can be eaten hot or cold. Keeps refrigerated for 3 days.',
     cookingTips: ['Add 2 tbsp Greek yogurt or guacamole for a creamy dressing.'],
     isHighProtein: false,
+    isBudgetFriendly: true
+  },
+  {
+    id: 'rec-6',
+    name: 'Tuscan Garlic Herb Chicken & Broccoli Skillet',
+    headline: 'High-Protein Keto & Low Carb Pan-Sear in 15 Mins',
+    image: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?w=800&auto=format&fit=crop&q=80',
+    prepTimeMinutes: 5,
+    cookTimeMinutes: 12,
+    defaultServings: 2,
+    estimatedCostPerServing: 2.25,
+    macrosPerServing: {
+      calories: 430,
+      protein: 46,
+      carbs: 9,
+      fat: 16,
+      fiber: 4
+    },
+    microsPerServing: {
+      sodium: 340, potassium: 890, calcium: 85, iron: 2.2, magnesium: 55, zinc: 2.1,
+      vitaminA: 180, vitaminC: 95, vitaminD: 0.3, vitaminE: 2.4, vitaminK: 140, vitaminB12: 1.1, folate: 110
+    },
+    healthScore: {
+      score: 95,
+      summary: 'Remarkable 46g pure lean protein combined with cruciferous sulforaphane antioxidant protection from broccoli.',
+      processingLevel: 'Unprocessed/Minimally Processed',
+      positiveFactors: [
+        { title: '46g Ultra-Lean Protein', description: 'Drives maximum post-workout muscle protein synthesis', impact: 'positive', weight: 40 },
+        { title: 'High Sulforaphane & Vit C', description: 'Over 100% daily Vitamin C for immune resilience', impact: 'positive', weight: 35 }
+      ],
+      negativeFactors: [
+        { title: 'Lower Carbohydrates', description: 'Pair with roasted baby potatoes if refueling after intense cardio', impact: 'negative', weight: 4 }
+      ]
+    },
+    dietaryTags: ['High Protein', 'Gluten Free', 'Quick Dinner', 'Keto Friendly'],
+    allergens: [],
+    ingredients: [
+      { id: 'i-61', name: 'Skinless Chicken Breast Fillets', amount: 350, unit: 'g', estimatedCost: 2.80, category: 'Meat' },
+      { id: 'i-62', name: 'Fresh Broccoli Florets', amount: 200, unit: 'g', estimatedCost: 0.70, category: 'Produce' },
+      { id: 'i-63', name: 'Extra Virgin Olive Oil', amount: 1.5, unit: 'tbsp', estimatedCost: 0.30, category: 'Oils' },
+      { id: 'i-64', name: 'Sundried Tomatoes (sliced)', amount: 30, unit: 'g', estimatedCost: 0.40, category: 'Condiments' },
+      { id: 'i-65', name: 'Garlic, Rosemary & Italian Herb Blend', amount: 1, unit: 'tbsp', estimatedCost: 0.30, category: 'Spices' }
+    ],
+    instructions: [
+      'Slice chicken breasts horizontally into cutlets for quick, even cooking. Season with garlic powder, salt, pepper, and Italian herbs.',
+      'Heat olive oil in a wide skillet over medium-high heat. Sear chicken cutlets for 4 minutes per side until golden brown and cooked through.',
+      'Remove chicken and set aside. In the same skillet, toss in broccoli florets, sundried tomatoes, and 2 tbsp water. Cover and steam for 3 minutes until tender-crisp.',
+      'Return chicken to the skillet, drizzle with any pan juices, and toss together for 60 seconds.',
+      'Plate hot and finish with fresh cracked black pepper and a squeeze of fresh lemon.'
+    ],
+    storageInfo: 'Ideal for 4-day meal prep boxes with roasted sweet potato wedges.',
+    cookingTips: ['Covering the pan with a lid creates instant steam to cook raw broccoli in under 3 minutes without boiling away vitamins.'],
+    isHighProtein: true,
+    isBudgetFriendly: true
+  },
+  {
+    id: 'rec-7',
+    name: 'Mediterranean Shakshuka with Poached Eggs',
+    headline: 'Traditional Cast-Iron Simmer with Lycopene & 22g Protein',
+    image: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=800&auto=format&fit=crop&q=80',
+    prepTimeMinutes: 8,
+    cookTimeMinutes: 14,
+    defaultServings: 2,
+    estimatedCostPerServing: 1.45,
+    macrosPerServing: {
+      calories: 330,
+      protein: 20,
+      carbs: 22,
+      fat: 14,
+      fiber: 6
+    },
+    microsPerServing: {
+      sodium: 380, potassium: 680, calcium: 140, iron: 4.2, magnesium: 48, zinc: 2.3,
+      vitaminA: 260, vitaminC: 62, vitaminD: 2.4, vitaminE: 3.1, vitaminK: 28, vitaminB12: 1.4, folate: 95
+    },
+    healthScore: {
+      score: 93,
+      summary: 'Rich cooked tomato lycopene combined with high-choline free-range eggs and anti-inflammatory peppers.',
+      processingLevel: 'Unprocessed/Minimally Processed',
+      positiveFactors: [
+        { title: 'Thermal-Activated Lycopene', description: 'Simmered tomatoes unleash potent cardiovascular antioxidants', impact: 'positive', weight: 35 },
+        { title: 'Choline & Vitamin D', description: 'High bio-quality egg protein supporting cellular membranes', impact: 'positive', weight: 30 }
+      ],
+      negativeFactors: [
+        { title: 'Simmer Time Required', description: 'Allow 10 minutes for tomato sauce reduction before cracking eggs', impact: 'negative', weight: 4 }
+      ]
+    },
+    dietaryTags: ['Vegetarian', 'High Protein', 'Gluten Free', 'Mediterranean', 'Budget Hero'],
+    allergens: ['Eggs'],
+    ingredients: [
+      { id: 'i-71', name: 'Free-Range Eggs', amount: 4, unit: 'large', estimatedCost: 1.10, category: 'Eggs' },
+      { id: 'i-72', name: 'Canned San Marzano Diced Tomatoes', amount: 400, unit: 'g', estimatedCost: 0.65, category: 'Canned' },
+      { id: 'i-73', name: 'Red Bell Pepper (sliced)', amount: 1, unit: 'whole', estimatedCost: 0.45, category: 'Produce' },
+      { id: 'i-74', name: 'Smoked Paprika, Cumin & Chili', amount: 1, unit: 'tbsp', estimatedCost: 0.25, category: 'Spices' },
+      { id: 'i-75', name: 'Crumbled Feta or Fresh Parsley', amount: 30, unit: 'g', estimatedCost: 0.45, category: 'Dairy' }
+    ],
+    instructions: [
+      'In a wide skillet, sauté sliced bell peppers and minced garlic in 1 tsp olive oil until soft (approx. 4 mins).',
+      'Add smoked paprika, ground cumin, and a pinch of chili flakes. Toast spices for 30 seconds.',
+      'Pour in diced tomatoes and simmer gently for 6 minutes until the sauce slightly thickens.',
+      'Create 4 small wells in the sauce with a spoon and crack 1 egg into each well.',
+      'Cover the pan with a lid and cook on low heat for 5-6 minutes until egg whites are set but yolks remain runny.',
+      'Scatter crumbled feta and fresh chopped parsley over the top. Serve immediately.'
+    ],
+    storageInfo: 'Base tomato sauce can be made 3 days in advance; crack and poach fresh eggs when ready to eat.',
+    cookingTips: ['Cook on lowest flame when lid is on so egg whites cook through evenly without overcooking the yolks.'],
+    isHighProtein: true,
+    isBudgetFriendly: true
+  },
+  {
+    id: 'rec-8',
+    name: 'Edamame Sesame Soba Noodle Crunch Bowl',
+    headline: 'Plant Protein & Buckwheat Complex Carbs in 12 Mins',
+    image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&auto=format&fit=crop&q=80',
+    prepTimeMinutes: 7,
+    cookTimeMinutes: 5,
+    defaultServings: 2,
+    estimatedCostPerServing: 1.85,
+    macrosPerServing: {
+      calories: 440,
+      protein: 26,
+      carbs: 64,
+      fat: 10,
+      fiber: 9
+    },
+    microsPerServing: {
+      sodium: 420, potassium: 710, calcium: 110, iron: 4.6, magnesium: 145, zinc: 3.1,
+      vitaminA: 310, vitaminC: 45, vitaminD: 0, vitaminE: 2.2, vitaminK: 65, vitaminB12: 0, folate: 190
+    },
+    healthScore: {
+      score: 92,
+      summary: 'Complete plant amino acid profile from green edamame paired with magnesium-rich 100% buckwheat soba.',
+      processingLevel: 'Processed Culinary',
+      positiveFactors: [
+        { title: 'Magnesium Powerhouse', description: '145mg magnesium covers nearly 50% daily metabolic requirement', impact: 'positive', weight: 35 },
+        { title: '26g Complete Plant Protein', description: 'Edamame provides all 9 essential amino acids', impact: 'positive', weight: 30 }
+      ],
+      negativeFactors: [
+        { title: 'Soy & Sesame Allergens', description: 'Check sensitivities before serving', impact: 'negative', weight: 5 }
+      ]
+    },
+    dietaryTags: ['Vegan', 'High Protein', 'High Fiber', 'Dairy Free'],
+    allergens: ['Soy', 'Sesame', 'Gluten'],
+    ingredients: [
+      { id: 'i-81', name: 'Buckwheat Soba Noodles (dry)', amount: 150, unit: 'g', estimatedCost: 1.20, category: 'Grains' },
+      { id: 'i-82', name: 'Shelled Edamame Beans (frozen)', amount: 180, unit: 'g', estimatedCost: 0.90, category: 'Frozen' },
+      { id: 'i-83', name: 'Grated Carrots & Red Cabbage', amount: 120, unit: 'g', estimatedCost: 0.50, category: 'Produce' },
+      { id: 'i-84', name: 'Toasted Sesame Oil & Soy Sauce', amount: 1.5, unit: 'tbsp', estimatedCost: 0.40, category: 'Condiments' },
+      { id: 'i-85', name: 'Rice Vinegar & Sesame Seeds', amount: 1, unit: 'tbsp', estimatedCost: 0.30, category: 'Condiments' }
+    ],
+    instructions: [
+      'Bring a pot of water to the boil. Cook soba noodles for 4 minutes. In the final 2 minutes, drop in frozen edamame beans.',
+      'Drain and rinse immediately with cold tap water to stop cooking and remove excess noodle starch.',
+      'In a small bowl, whisk sesame oil, low-sodium soy sauce, rice vinegar, and grated ginger.',
+      'Toss chilled soba noodles, edamame, shredded purple cabbage, and carrots in a large bowl with the sesame dressing.',
+      'Garnish with toasted sesame seeds and sliced scallions. Enjoy cold!'
+    ],
+    storageInfo: 'Stays exceptionally crisp and refreshing in the fridge for up to 3 days. Perfect cold work lunch.',
+    cookingTips: ['Always rinse soba in cold water after boiling — this gives Japanese buckwheat noodles their signature springy bite.'],
+    isHighProtein: true,
+    isBudgetFriendly: true
+  },
+  {
+    id: 'rec-9',
+    name: 'Grass-Fed Beef & Black Bean Chipotle Chili',
+    headline: 'High-Iron & Zinc Muscle Recovery Stew',
+    image: 'https://images.unsplash.com/photo-1541832676-9b763b0239ab?w=800&auto=format&fit=crop&q=80',
+    prepTimeMinutes: 10,
+    cookTimeMinutes: 25,
+    defaultServings: 4,
+    estimatedCostPerServing: 1.95,
+    macrosPerServing: {
+      calories: 490,
+      protein: 44,
+      carbs: 42,
+      fat: 12,
+      fiber: 11
+    },
+    microsPerServing: {
+      sodium: 390, potassium: 980, calcium: 90, iron: 6.2, magnesium: 105, zinc: 6.8,
+      vitaminA: 240, vitaminC: 28, vitaminD: 0.5, vitaminE: 1.5, vitaminK: 18, vitaminB12: 3.2, folate: 160
+    },
+    healthScore: {
+      score: 91,
+      summary: 'Massive bio-iron and zinc payload from lean beef and black beans, creating the ultimate post-strength training recovery bowl.',
+      processingLevel: 'Unprocessed/Minimally Processed',
+      positiveFactors: [
+        { title: '6.8mg High Bio-Zinc', description: '70% RDA zinc for testosterone and muscular repair', impact: 'positive', weight: 40 },
+        { title: '44g Sustained Protein', description: 'Slow-release amino acid profile for overnight recovery', impact: 'positive', weight: 35 },
+        { title: '11g Gut Fiber', description: 'Supports insulin sensitivity and microbiome balance', impact: 'positive', weight: 25 }
+      ],
+      negativeFactors: [
+        { title: 'Moderate Saturated Fat', description: 'Opt for 5% lean beef mince to keep lipids optimal', impact: 'negative', weight: 8 }
+      ]
+    },
+    dietaryTags: ['High Protein', 'Gluten Free', 'High Fiber', 'Batch Cook King'],
+    allergens: [],
+    ingredients: [
+      { id: 'i-91', name: 'Lean Beef Mince (5% fat)', amount: 450, unit: 'g', estimatedCost: 3.80, category: 'Meat', substitution: { name: 'Extra Firm Tofu / Brown Lentils', reason: 'Cuts price by £2.00 while maintaining high protein', costDiff: -2.00, proteinDiff: -8 } },
+      { id: 'i-92', name: 'Canned Black Beans (rinsed)', amount: 400, unit: 'g', estimatedCost: 0.65, category: 'Canned' },
+      { id: 'i-93', name: 'Canned Kidney Beans', amount: 400, unit: 'g', estimatedCost: 0.65, category: 'Canned' },
+      { id: 'i-94', name: 'Passata / Crushed Tomatoes', amount: 500, unit: 'g', estimatedCost: 0.75, category: 'Canned' },
+      { id: 'i-95', name: 'Chipotle Paste, Cumin & Cacao Powder', amount: 2, unit: 'tbsp', estimatedCost: 0.50, category: 'Spices' }
+    ],
+    instructions: [
+      'Heat a large pot over medium-high heat. Brown the minced beef with diced onion and minced garlic for 6 minutes, breaking into crumbles.',
+      'Stir in chipotle paste, cumin, oregano, and 1 tsp unsweetened raw cacao powder (adds rich smoky depth).',
+      'Add drained black beans, kidney beans, passata, and 150ml water or beef bone broth.',
+      'Bring to a boil, then reduce heat to low and simmer for 20 minutes with the lid partially open, stirring occasionally until thick.',
+      'Serve warm topped with fresh cilantro, a spoon of Greek yogurt, or sliced jalapenos.'
+    ],
+    storageInfo: 'A true batch-cook champion. Yields 4 large meals and freezes for up to 4 months.',
+    cookingTips: ['Adding 1 teaspoon of raw unsweetened dark cacao powder deepens the chili flavour without adding sweetness.'],
+    isHighProtein: true,
+    isBudgetFriendly: true
+  },
+  {
+    id: 'rec-10',
+    name: 'Super Green Spirulina Spinach Smoothie Bowl',
+    headline: 'Cellular Detox & Micronutrient Burst under 5 Mins',
+    image: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?w=800&auto=format&fit=crop&q=80',
+    prepTimeMinutes: 4,
+    cookTimeMinutes: 0,
+    defaultServings: 1,
+    estimatedCostPerServing: 1.60,
+    macrosPerServing: {
+      calories: 320,
+      protein: 22,
+      carbs: 46,
+      fat: 4,
+      fiber: 8
+    },
+    microsPerServing: {
+      sodium: 90, potassium: 820, calcium: 260, iron: 4.8, magnesium: 110, zinc: 2.1,
+      vitaminA: 480, vitaminC: 75, vitaminD: 1.5, vitaminE: 2.8, vitaminK: 210, vitaminB12: 1.8, folate: 210
+    },
+    healthScore: {
+      score: 97,
+      summary: 'Ultimate cellular micronutrient density: over 200% daily Vitamin K, potent lutein, chlorophyll, and gut-friendly probiotics.',
+      processingLevel: 'Unprocessed/Minimally Processed',
+      positiveFactors: [
+        { title: 'Massive Antioxidant Chlorophyll', description: 'Deep alkalizing plant phytonutrients', impact: 'positive', weight: 40 },
+        { title: 'Over 200% Vitamin K & A', description: 'Essential for blood platelet health and cellular skin repair', impact: 'positive', weight: 35 }
+      ],
+      negativeFactors: [
+        { title: 'Best Consumed Fresh', description: 'Drink immediately after blending to preserve active live enzymes', impact: 'negative', weight: 3 }
+      ]
+    },
+    dietaryTags: ['Vegetarian', 'High Fiber', 'Zero Cook', 'Immunity Boost', 'Gluten Free'],
+    allergens: ['Dairy'],
+    ingredients: [
+      { id: 'i-101', name: 'Fresh Baby Spinach & Kale', amount: 80, unit: 'g', estimatedCost: 0.40, category: 'Produce' },
+      { id: 'i-102', name: 'Frozen Banana & Mango Chunks', amount: 120, unit: 'g', estimatedCost: 0.45, category: 'Fruit' },
+      { id: 'i-103', name: 'Plain Greek Yogurt 0%', amount: 100, unit: 'g', estimatedCost: 0.45, category: 'Dairy' },
+      { id: 'i-104', name: 'Organic Spirulina / Chlorella Powder', amount: 1, unit: 'tsp', estimatedCost: 0.20, category: 'Superfoods' },
+      { id: 'i-105', name: 'Cold Water or Coconut Water', amount: 100, unit: 'ml', estimatedCost: 0.10, category: 'Beverages' }
+    ],
+    instructions: [
+      'Add fresh spinach, frozen mango/banana chunks, and spirulina powder into a high-speed blender.',
+      'Spoon in 0% Greek yogurt and add 100ml cold water.',
+      'Blend on high for 45-60 seconds until ultra-creamy and vibrant electric green.',
+      'Pour into a chilled bowl. Top with pumpkin seeds, sliced kiwi, or hemp hearts if desired.'
+    ],
+    storageInfo: 'Consume immediately after preparation for peak antioxidant potency.',
+    cookingTips: ['Use frozen banana chunks rather than room temp fruit to get a thick, soft-serve ice cream texture.'],
+    isHighProtein: true,
     isBudgetFriendly: true
   }
 ];

@@ -363,7 +363,7 @@ const ProfilePage: React.FC = () => {
               <div>
                 <p className="text-sm font-semibold">Reset All Data</p>
                 <p className="text-xs text-muted-foreground">
-                  This will permanently delete all your profile, nutrition logs, recipes, and fitness data. This action cannot be undone.
+                  This will permanently delete your profile and all data, returning you to the setup screen. This action cannot be undone.
                 </p>
               </div>
               <AlertDialog>
@@ -376,7 +376,7 @@ const ProfilePage: React.FC = () => {
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action is permanent and cannot be undone. This will delete all your personal settings, food logs, saved recipes, fitness plans, and shopping lists.
+                      This action is permanent. This will delete all your personal settings, food logs, saved recipes, and fitness plans, and you will be returned to the initial profile creation screen.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
